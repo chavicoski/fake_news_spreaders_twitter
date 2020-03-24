@@ -7,48 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 import tensorflow_hub as hub
 import tensorflow_datasets as tfds
-'''
-class Tweet_datagen(keras.utils.Sequence):
 
-    ################## DEPRECATED #########################
-    def __init__(self, samples_paths, labels_path, batch_size):
-        self.batch_size = batch_size
-        self.files = samples_paths
-
-        # Get all the labels
-        self.labels_dict = {}
-        with open(labels_path) as labels:
-            for line in labels:
-                user_id, label = line.split(":::")
-                self.labels_dict[user_id] = int(label)
-
-        # Build a vector with the ordered labels 
-        self.labels = []
-        for f_path in self.files:         
-            user_name = f_path.split('/')[-1][-4]  # -4 for removing the .xml extension
-            self.labels.append(self.labels_dict[user_name]) 
-
-    def __len__(self):
-        return math.ceil(len(self.files)/self.batch_size)
-
-    def __getitem__(self, idx):
-        files_batch = self.files[idx * self.batch_size:(idx + 1) * self.batch_size]
-        labels_batch = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
-        
-        # Get the tweets and their corresponding labels
-        X, Y = [], []
-        for f_path, label in zip(files_batch, labels_batch):
-            tree = ET.parse(f_path) 
-            root = tree.getroot()
-            for tweet in root.iter("document"):
-                X.append([tweet.text])
-                Y.append(label)
-
-        return np.array(X), np.array(labels_batch)
-
-    def on_epoch_end(self):
-        pass
-'''
 '''
 Data generator that returns the tweets encoded word by word
 Params:
@@ -163,3 +122,46 @@ def text_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=100,
     lines_dataset = lines_dataset.prefetch(prefetch_batches)
 
     return lines_dataset
+
+'''
+class Tweet_datagen(keras.utils.Sequence):
+
+    ################## DEPRECATED #########################
+    def __init__(self, samples_paths, labels_path, batch_size):
+        self.batch_size = batch_size
+        self.files = samples_paths
+
+        # Get all the labels
+        self.labels_dict = {}
+        with open(labels_path) as labels:
+            for line in labels:
+                user_id, label = line.split(":::")
+                self.labels_dict[user_id] = int(label)
+
+        # Build a vector with the ordered labels 
+        self.labels = []
+        for f_path in self.files:         
+            user_name = f_path.split('/')[-1][-4]  # -4 for removing the .xml extension
+            self.labels.append(self.labels_dict[user_name]) 
+
+    def __len__(self):
+        return math.ceil(len(self.files)/self.batch_size)
+
+    def __getitem__(self, idx):
+        files_batch = self.files[idx * self.batch_size:(idx + 1) * self.batch_size]
+        labels_batch = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
+        
+        # Get the tweets and their corresponding labels
+        X, Y = [], []
+        for f_path, label in zip(files_batch, labels_batch):
+            tree = ET.parse(f_path) 
+            root = tree.getroot()
+            for tweet in root.iter("document"):
+                X.append([tweet.text])
+                Y.append(label)
+
+        return np.array(X), np.array(labels_batch)
+
+    def on_epoch_end(self):
+        pass
+'''
