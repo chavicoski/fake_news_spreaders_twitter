@@ -75,12 +75,16 @@ def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=1
     '''
     # Shuffle the data. Can be set to shuffle at the end of each epoch
     lines_dataset = lines_dataset.shuffle(buffer_size, reshuffle_each_iteration=shuffle_at_end)
+    # Get the number of batches per epoch
+    num_batches = len(list(lines_dataset)) // batch_size
     # Prepare padded batches in order to have sentences of the same length
     lines_dataset = lines_dataset.padded_batch(batch_size=batch_size, padded_shapes=([None], []))
+    # Repeat dataset for each epoch
+    lines_dataset = lines_dataset.repeat()
     # Prefetch buffer for the batches to improve speed
     lines_dataset = lines_dataset.prefetch(prefetch_batches)
 
-    return lines_dataset, vocabulary_set
+    return lines_dataset, vocabulary_set, num_batches
 
 
 '''
@@ -116,12 +120,16 @@ def text_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=100,
     '''
     # Shuffle the data. Can be set to shuffle at the end of each epoch
     lines_dataset = lines_dataset.shuffle(buffer_size, reshuffle_each_iteration=shuffle_at_end)
+    # Get the number of batches per epoch
+    num_batches = len(list(lines_dataset)) // batch_size
     # Prepare padded batches in order to have sentences of the same length
     lines_dataset = lines_dataset.batch(batch_size=batch_size)
+    # Repeat dataset for each epoch
+    lines_dataset = lines_dataset.repeat()
     # Prefetch buffer for the batches to improve speed
     lines_dataset = lines_dataset.prefetch(prefetch_batches)
 
-    return lines_dataset
+    return lines_dataset, num_batches
 
 '''
 class Tweet_datagen(keras.utils.Sequence):
