@@ -44,7 +44,7 @@ for data_path in dataset:
                 tree = ET.parse(os.path.join(data_path, f_name)) 
                 root = tree.getroot()
                 for tweet in root.iter("document"):
-                    tweet_text = tweet.text.replace('\n', ' ')
+                    tweet_text = tweet.text.replace('\n', ' ').lower()
                     label = labels_dict[f_name[:-4]]
                     preprocessed_f.write(f"{tweet_text} {label}\n")
 
@@ -57,6 +57,6 @@ for data_path in dataset:
                 tree = ET.parse(os.path.join(data_path, f_name)) 
                 root = tree.getroot()
                 for tweet in root.iter("document"):
-                    tweet_text = tweet.text.replace('\n', ' ')
+                    tweet_text = tweet.text.replace('\n', ' ').lower()
                     label = labels_dict[f_name[:-4]]
                     preprocessed_f.write(f"{tweet_text} {label}\n")
