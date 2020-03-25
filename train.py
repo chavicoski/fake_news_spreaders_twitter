@@ -30,7 +30,7 @@ model_number = 0
 print(f"Building model {model_number}...")
 if model_number == 0:
     # To enable the fine tuning of the pretrained embedding
-    trainable_embedding = False
+    trainable_embedding = True
     # Build the data generators for train and dev
     train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
     dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
