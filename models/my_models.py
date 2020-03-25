@@ -4,7 +4,7 @@ import tensorflow_hub as hub
 from tensorflow import keras
 from tensorflow.keras.layers import Bidirectional, LSTM, Dense, Embedding, BatchNormalization
 
-def model_0(lang):
+def model_0(lang, trainable_embedding=True):
     '''
     Model with pretrained embedding of size 50
     '''
@@ -14,7 +14,7 @@ def model_0(lang):
     elif lang == 'es':
         embedding_path = "https://tfhub.dev/google/nnlm-es-dim50/2"
 
-    embedding_layer = hub.KerasLayer(embedding_path, output_shape=[50], input_shape=[], dtype=tf.string, trainable=True)
+    embedding_layer = hub.KerasLayer(embedding_path, output_shape=[50], input_shape=[], dtype=tf.string, trainable=trainable_embedding)
 
     model = keras.Sequential()
     model.add(embedding_layer)
