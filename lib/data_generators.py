@@ -131,45 +131,22 @@ def text_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=100,
 
     return lines_dataset, num_batches
 
-'''
-class Tweet_datagen(keras.utils.Sequence):
 
-    ################## DEPRECATED #########################
-    def __init__(self, samples_paths, labels_path, batch_size):
+class Test_datagen(keras.utils.Sequence):
+
+    def __init__(self, samples_path, batch_size):
         self.batch_size = batch_size
-        self.files = samples_paths
-
-        # Get all the labels
-        self.labels_dict = {}
-        with open(labels_path) as labels:
-            for line in labels:
-                user_id, label = line.split(":::")
-                self.labels_dict[user_id] = int(label)
-
-        # Build a vector with the ordered labels 
-        self.labels = []
-        for f_path in self.files:         
-            user_name = f_path.split('/')[-1][-4]  # -4 for removing the .xml extension
-            self.labels.append(self.labels_dict[user_name]) 
+        self.files = [os.path.join(samples_path, f) for f in os.listdir(samples_path) if f.endswith(".xml")]
 
     def __len__(self):
         return math.ceil(len(self.files)/self.batch_size)
 
     def __getitem__(self, idx):
         files_batch = self.files[idx * self.batch_size:(idx + 1) * self.batch_size]
-        labels_batch = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
         
-        # Get the tweets and their corresponding labels
-        X, Y = [], []
-        for f_path, label in zip(files_batch, labels_batch):
-            tree = ET.parse(f_path) 
-            root = tree.getroot()
-            for tweet in root.iter("document"):
-                X.append([tweet.text])
-                Y.append(label)
+        X = []
+        for f_path in files_batch:
+            for tweet in get_tweets(f_path):
+                X.append(tweet)
 
-        return np.array(X), np.array(labels_batch)
-
-    def on_epoch_end(self):
-        pass
-'''
+        return np.array(X)
