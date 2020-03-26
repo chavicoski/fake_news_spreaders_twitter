@@ -24,7 +24,7 @@ elif lang == 'es':
 batch_size = 256
 epochs = 50
 # Select model architecture
-model_number = 0
+model_number = 2
 
 # Build the selected model
 print(f"Building model {model_number}...")
@@ -45,6 +45,15 @@ elif model_number == 1:
     vocab_size = len(vocab_train.union(vocab_dev)) + 1
     # Create the model
     model = model_1(vocab_size)
+
+elif model_number == 2:
+    # To enable the fine tuning of the pretrained embedding
+    trainable_embedding = True
+    # Build the data generators for train and dev
+    train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
+    dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
+    # Create the model
+    model = model_2(lang, trainable_embedding)
 
 # Print the model 
 model.summary()
@@ -75,6 +84,8 @@ if model_number == 0:
     loaded_model = model_0(lang)
 elif model_number == 1:
     loaded_model = model_1(vocab_size)
+elif model_number == 2:
+    loaded_model = model_2(lang)
 # Compile the model
 loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
 # Load the trained weights

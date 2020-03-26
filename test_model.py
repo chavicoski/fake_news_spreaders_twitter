@@ -14,7 +14,7 @@ saved_models_path = "models/checkpoints"
 # Select language to test
 lang = "es"
 # Select model to test
-model_number = 0
+model_number = 2
 # Get the path to the trained model
 ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
@@ -30,6 +30,14 @@ if model_number == 0:
 elif model_number == 1:
     # Build model
     model = model_1(vocab_size)
+    # Compile the model
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
+    # Load the trained weights in the model
+    model.load_weights(ckpt_path)
+
+elif model_number == 2:
+    # Build model
+    model = model_2(lang)
     # Compile the model
     model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
     # Load the trained weights in the model

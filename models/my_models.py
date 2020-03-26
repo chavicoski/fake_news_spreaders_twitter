@@ -18,9 +18,7 @@ def model_0(lang, trainable_embedding=True):
 
     model = keras.Sequential()
     model.add(embedding_layer)
-    model.add(BatchNormalization())
-    model.add(Dense(32, activation="relu"))
-    model.add(BatchNormalization())
+    model.add(Dense(16, activation="relu"))
     model.add(Dense(1, activation="sigmoid"))
     
     return model
@@ -41,4 +39,22 @@ def model_1(vocab_size):
 
     return model
 
+def model_2(lang, trainable_embedding=True):
+    '''
+    Model with pretrained embedding of size 50
+    '''
+    # Get the embedding for the selected language
+    if lang == 'en':
+        embedding_path = "https://tfhub.dev/google/tf2-preview/nnlm-en-dim128/1"
+    elif lang == 'es':
+        embedding_path = "https://tfhub.dev/google/tf2-preview/nnlm-es-dim128/1"
 
+    embedding_layer = hub.KerasLayer(embedding_path, output_shape=[128], input_shape=[], dtype=tf.string, trainable=trainable_embedding)
+
+    model = keras.Sequential()
+    model.add(embedding_layer)
+    model.add(Dense(16, activation="relu"))
+    model.add(Dense(1, activation="sigmoid"))
+    
+    return model
+ 
