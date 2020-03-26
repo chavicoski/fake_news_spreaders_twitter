@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow import keras
-from tensorflow.keras.layers import Bidirectional, LSTM, Dense, Embedding, BatchNormalization
+from tensorflow.keras.layers import Bidirectional, LSTM, Dense, Embedding, BatchNormalization, Dropout
 
 def model_0(lang, trainable_embedding=True):
     '''
@@ -53,7 +53,14 @@ def model_2(lang, trainable_embedding=True):
 
     model = keras.Sequential()
     model.add(embedding_layer)
-    model.add(Dense(16, activation="relu"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(32, activation="relu"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(32, activation="relu"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
     model.add(Dense(1, activation="sigmoid"))
     
     return model

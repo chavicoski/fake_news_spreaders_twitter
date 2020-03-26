@@ -22,7 +22,7 @@ elif lang == 'es':
     train_data, dev_data = es_train_data, es_dev_data
 
 batch_size = 256
-epochs = 50
+epochs = 200
 # Select model architecture
 model_number = 2
 

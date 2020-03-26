@@ -54,7 +54,7 @@ with open(os.path.join(test_data, "labels_dict.pickle"), "rb") as handle:
 '''
 Prediction
 '''
-classification_threshold = 0.5
+classification_threshold = 0.6
 total_authors = 0
 fake_miss = 0
 true_miss = 0
