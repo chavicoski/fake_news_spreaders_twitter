@@ -18,30 +18,20 @@ model_number = 2
 # Get the path to the trained model
 ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
-# Load the selected model
+# Build the selected model to load the weights
 if model_number == 0:
-    # Build model
     model = model_0(lang)
-    # Compile the model
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
-    # Load the trained weights in the model
-    model.load_weights(ckpt_path)
-
 elif model_number == 1:
-    # Build model
     model = model_1(vocab_size)
-    # Compile the model
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
-    # Load the trained weights in the model
-    model.load_weights(ckpt_path)
-
 elif model_number == 2:
-    # Build model
     model = model_2(lang)
-    # Compile the model
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
-    # Load the trained weights in the model
-    model.load_weights(ckpt_path)
+elif model_number == 3:
+    model = model_3(lang)
+    
+# Compile the model
+model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
+# Load the trained weights in the model
+model.load_weights(ckpt_path)
 
 # Select language for data
 if lang == "es": test_data = es_test_data
@@ -54,7 +44,7 @@ with open(os.path.join(test_data, "labels_dict.pickle"), "rb") as handle:
 '''
 Prediction
 '''
-classification_threshold = 0.6
+classification_threshold = 0.5
 total_authors = 0
 fake_miss = 0
 true_miss = 0

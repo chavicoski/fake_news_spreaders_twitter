@@ -28,14 +28,19 @@ model_number = 2
 
 # Build the selected model
 print(f"Building model {model_number}...")
-if model_number == 0:
+if model_number in [0, 2, 3]:
     # To enable the fine tuning of the pretrained embedding
     trainable_embedding = True
     # Build the data generators for train and dev
     train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
     dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
     # Create the model
-    model = model_0(lang, trainable_embedding)
+    if model_number == 0:
+        model = model_0(lang, trainable_embedding)
+    elif model_number == 2:
+        model = model_2(lang, trainable_embedding)
+    elif model_number == 3:
+        model = model_3(lang, trainable_embedding)
 
 elif model_number == 1:
     # Build the data generators for train and dev
@@ -45,15 +50,6 @@ elif model_number == 1:
     vocab_size = len(vocab_train.union(vocab_dev)) + 1
     # Create the model
     model = model_1(vocab_size)
-
-elif model_number == 2:
-    # To enable the fine tuning of the pretrained embedding
-    trainable_embedding = True
-    # Build the data generators for train and dev
-    train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
-    dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
-    # Create the model
-    model = model_2(lang, trainable_embedding)
 
 # Print the model 
 model.summary()
@@ -86,6 +82,9 @@ elif model_number == 1:
     loaded_model = model_1(vocab_size)
 elif model_number == 2:
     loaded_model = model_2(lang)
+elif model_number == 3:
+    loaded_model = model_3(lang)
+
 # Compile the model
 loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
 # Load the trained weights
