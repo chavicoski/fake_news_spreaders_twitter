@@ -1,4 +1,6 @@
 import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
+os.environ["CUDA_VISIBLE_DEVICES"]="0";  
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.optimizers import SGD, Adam
@@ -22,12 +24,12 @@ elif lang == 'es':
     train_data, dev_data = es_train_data, es_dev_data
 
 batch_size = 256
-epochs = 200
+epochs = 100
 # Select model architecture
-model_number = 2
+model_number = 1
 
 # Build the selected model
-print(f"Building model {model_number}...")
+print(f"Building model {model_number} for language {lang}...")
 if model_number in [0, 2, 3]:
     # To enable the fine tuning of the pretrained embedding
     trainable_embedding = True
@@ -36,11 +38,11 @@ if model_number in [0, 2, 3]:
     dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
     # Create the model
     if model_number == 0:
-        model = model_0(lang, trainable_embedding)
+        model = model_0(lang, trainable_embedding, downloaded=True)
     elif model_number == 2:
-        model = model_2(lang, trainable_embedding)
+        model = model_2(lang, trainable_embedding, downloaded=True)
     elif model_number == 3:
-        model = model_3(lang, trainable_embedding)
+        model = model_3(lang, trainable_embedding, downloaded=True)
 
 elif model_number == 1:
     # Build the data generators for train and dev
@@ -77,13 +79,13 @@ history = model.fit(train_datagen, epochs=epochs, validation_data=dev_datagen, c
 print(f"Loading best model from training...")
 # Create the model architecture to load the saved weights in it
 if model_number == 0:
-    loaded_model = model_0(lang)
+    loaded_model = model_0(lang, downloaded=True)
 elif model_number == 1:
     loaded_model = model_1(vocab_size)
 elif model_number == 2:
-    loaded_model = model_2(lang)
+    loaded_model = model_2(lang, downloaded=True)
 elif model_number == 3:
-    loaded_model = model_3(lang)
+    loaded_model = model_3(lang, downloaded=True)
 
 # Compile the model
 loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 

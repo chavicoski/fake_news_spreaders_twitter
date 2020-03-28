@@ -1,4 +1,6 @@
 import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
+os.environ["CUDA_VISIBLE_DEVICES"]="0";  
 import tensorflow as tf
 from models.my_models import *
 from lib.data_generators import Test_datagen
@@ -14,19 +16,19 @@ saved_models_path = "models/checkpoints"
 # Select language to test
 lang = "es"
 # Select model to test
-model_number = 2
+model_number = 3
 # Get the path to the trained model
 ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
 # Build the selected model to load the weights
 if model_number == 0:
-    model = model_0(lang)
+    model = model_0(lang, downloaded=True)
 elif model_number == 1:
     model = model_1(vocab_size)
 elif model_number == 2:
-    model = model_2(lang)
+    model = model_2(lang, downloaded=True)
 elif model_number == 3:
-    model = model_3(lang)
+    model = model_3(lang, downloaded=True)
     
 # Compile the model
 model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]) 
