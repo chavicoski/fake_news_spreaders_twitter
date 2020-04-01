@@ -26,7 +26,7 @@ elif lang == 'es':
 batch_size = 256
 epochs = 100
 # Select model architecture
-model_number = 1
+model_number = 3
 
 # Build the selected model
 print(f"Building model {model_number} for language {lang}...")
@@ -64,7 +64,7 @@ opt = SGD(learning_rate=0.01, momentum=0.9)
 ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 checkpoint = keras.callbacks.ModelCheckpoint(
         ckpt_path, 
-        save_weights_only=True, 
+        save_weights_only=(model_number != 1), 
         save_best_only=True,
         monitor="val_loss",
         verbose=1)

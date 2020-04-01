@@ -45,9 +45,11 @@ def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=1
     for text_tensor, _ in lines_dataset:
         some_tokens = tokenizer.tokenize(text_tensor.numpy())
         vocabulary_set.update(some_tokens)
-
+	
     # Build the encoder from the vocabulary
     encoder = tfds.features.text.TokenTextEncoder(vocabulary_set)
+    # Store the encoder for testing
+    encoder.save_to_file("models/encoder.txt")
     
     # Encoder fuction to apply to the samples
     def encode(text_tensor, label):
@@ -85,6 +87,51 @@ def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=1
     lines_dataset = lines_dataset.prefetch(prefetch_batches)
 
     return lines_dataset, vocabulary_set, num_batches
+
+
+'''
+Data generator that returns the tweets encoded word by word
+Params:
+    tweets -> list with the tweet's strings
+'''
+def encoded_datagen_inference(tweets):
+
+	# Create the Dataset with the tweets
+    tweets_dataset = tf.data.Dataset.from_tensor_slices(tweets)
+
+    '''
+    Sentence tokenization
+    '''
+    # Build the encoder from the vocabulary
+    encoder = tfds.features.text.TokenTextEncoder.load_from_file("models/encoder.txt")
+    
+    # Encoder fuction to apply to the samples
+    def encode(text_tensor):
+        encoded_text = encoder.encode(text_tensor.numpy())
+        return encoded_text
+
+    # Encoder function wraper
+    def encode_map_fn(text):
+        # py_func doesn't set the shape of the returned tensors.
+        encoded_text = tf.py_function(encode, inp=[text], Tout=tf.int64)
+
+        # `tf.data.Datasets` work best if all components have a shape set
+        #  so set the shapes manually: 
+        encoded_text.set_shape([None])
+
+        return encoded_text
+
+    # Apply the encoder to the data
+    tweets_dataset = tweets_dataset.map(encode_map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    '''
+    Batch preparation
+    '''
+    # Prepare padded batches in order to have sentences of the same length
+	# Batch_size is one for later calculation fo the author label
+    #tweets_dataset = tweets_dataset.padded_batch(batch_size=1, padded_shapes=([None]))
+    tweets_dataset = tweets_dataset.batch(1)
+
+    return tweets_dataset
 
 
 '''
