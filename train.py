@@ -1,6 +1,6 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
-os.environ["CUDA_VISIBLE_DEVICES"]="0";  
+os.environ["CUDA_VISIBLE_DEVICES"]="1";  
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.optimizers import SGD, Adam
@@ -17,7 +17,7 @@ es_dev_data = os.path.join(data_path, "es", "dev_tweets.txt")
 saved_models_path = "models/checkpoints"
 
 # Select language for training
-lang = 'es'
+lang = 'en'
 
 if lang == 'en':
     train_data, dev_data = en_train_data, en_dev_data
@@ -77,7 +77,7 @@ callbacks = []
 
 callbacks.append(LearningRateScheduler(lr_scheduler))
 
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
 callbacks.append(keras.callbacks.ModelCheckpoint(
         ckpt_path, 
         save_weights_only=(model_number != 1), 

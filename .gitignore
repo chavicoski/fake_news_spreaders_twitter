@@ -2,3 +2,5 @@ __pycache__
 checkpoints
 tf_hub_modules
 *.zip
+output*
+*.tokens

@@ -16,11 +16,11 @@ es_test_data = os.path.join(test_data_path, "es")
 saved_models_path = "models/checkpoints"
 
 # Select language to test
-lang = "en"
+lang = "es"
 # Select model to test
-model_number = 3
+model_number = 4
 # Get the path to the trained model
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
 
 # Build the selected model to load the weights
 if model_number in [0, 2, 3, 4]:
