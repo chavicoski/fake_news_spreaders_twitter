@@ -4,6 +4,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0";
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.optimizers import SGD, Adam
+from tensorflow.keras.callbacks import LearningRateScheduler
 from lib.data_generators import text_datagen, encoded_datagen
 from models.my_models import *
 
@@ -24,13 +25,13 @@ elif lang == 'es':
     train_data, dev_data = es_train_data, es_dev_data
 
 batch_size = 256
-epochs = 100
+epochs = 10000
 # Select model architecture
-model_number = 3
+model_number = 4
 
 # Build the selected model
 print(f"Building model {model_number} for language {lang}...")
-if model_number in [0, 2, 3]:
+if model_number in [0, 2, 3, 4]:
     # To enable the fine tuning of the pretrained embedding
     trainable_embedding = True
     # Build the data generators for train and dev
@@ -43,6 +44,8 @@ if model_number in [0, 2, 3]:
         model = model_2(lang, trainable_embedding, downloaded=True)
     elif model_number == 3:
         model = model_3(lang, trainable_embedding, downloaded=True)
+    elif model_number == 4:
+        model = model_4(lang, trainable_embedding, downloaded=True)
 
 elif model_number == 1:
     # Build the data generators for train and dev
@@ -57,40 +60,58 @@ elif model_number == 1:
 model.summary()
 
 # Optimizer 
-opt = SGD(learning_rate=0.01, momentum=0.9)
-#opt = Adam(learning_rate=0.001)
+opt = SGD(learning_rate=0.0002, momentum=0.9)
+#opt = Adam(learning_rate=0.0002)
+
+# Learning rate scheduler
+def lr_scheduler(epoch):
+    if epoch < 1000:
+        return 0.0002
+    elif epoch < 5000:
+        return 0.0001
+    else:
+        return 0.00005
 
 # Callbacks
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
-checkpoint = keras.callbacks.ModelCheckpoint(
+callbacks = []
+
+callbacks.append(LearningRateScheduler(lr_scheduler))
+
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr.ckpt")
+callbacks.append(keras.callbacks.ModelCheckpoint(
         ckpt_path, 
         save_weights_only=(model_number != 1), 
         save_best_only=True,
         monitor="val_loss",
-        verbose=1)
+        verbose=1))
 
 # Compile the model
 model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
 
 # Train
-history = model.fit(train_datagen, epochs=epochs, validation_data=dev_datagen, callbacks=[checkpoint], steps_per_epoch=num_batches_train, validation_steps=num_batches_dev)
+history = model.fit(train_datagen, epochs=epochs, validation_data=dev_datagen, callbacks=callbacks, steps_per_epoch=num_batches_train, validation_steps=num_batches_dev)
 
 # Load the model from the best epoch
 print(f"Loading best model from training...")
-# Create the model architecture to load the saved weights in it
-if model_number == 0:
-    loaded_model = model_0(lang, downloaded=True)
-elif model_number == 1:
-    loaded_model = model_1(vocab_size)
-elif model_number == 2:
-    loaded_model = model_2(lang, downloaded=True)
-elif model_number == 3:
-    loaded_model = model_3(lang, downloaded=True)
+# Check the type of saved model (weights or full model)
+if model_number in [0, 2, 3, 4]:
+    # Create the model architecture to load the saved weights in it
+    if model_number == 0:
+        loaded_model = model_0(lang, downloaded=True)
+    elif model_number == 2:
+        loaded_model = model_2(lang, downloaded=True)
+    elif model_number == 3:
+        loaded_model = model_3(lang, downloaded=True)
+    elif model_number == 4:
+        loaded_model = model_4(lang, downloaded=True)
 
-# Compile the model
-loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
-# Load the trained weights
-loaded_model.load_weights(ckpt_path)
+    # Compile the model
+    loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
+    # Load the trained weights
+    loaded_model.load_weights(ckpt_path)
+
+elif model_number == 1:
+    loaded_model = keras.models.load_model(ckpt_path)
 
 # Evaluate with development partition
 print(f"Evaluating the model...")

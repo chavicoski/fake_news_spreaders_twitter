@@ -16,20 +16,22 @@ es_test_data = os.path.join(test_data_path, "es")
 saved_models_path = "models/checkpoints"
 
 # Select language to test
-lang = "es"
+lang = "en"
 # Select model to test
-model_number = 1
+model_number = 3
 # Get the path to the trained model
 ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
 # Build the selected model to load the weights
-if model_number in [0, 2, 3]:
+if model_number in [0, 2, 3, 4]:
     if model_number == 0:
         model = model_0(lang, downloaded=True)
     elif model_number == 2:
         model = model_2(lang, downloaded=True)
     elif model_number == 3:
         model = model_3(lang, downloaded=True)
+    elif model_number == 4:
+        model = model_4(lang, downloaded=True)
     
     # Compile the model
     model.compile(optimizer="sgd", loss="binary_crossentropy", metrics=["accuracy"]) 
@@ -71,9 +73,9 @@ for f_name in os.listdir(test_data):
             tweets_dataset = tf.data.Dataset.from_tensor_slices(tweets)
             tweets_dataset = tweets_dataset.batch(1)
  
-        print("TESTING DATAGEN")
-        for elem in tweets_dataset:
-            print(elem.numpy())
+        #print("TESTING DATAGEN")
+        #for elem in tweets_dataset:
+        #    print(elem.numpy())
 
         # Predict
         results = model.predict(tweets_dataset, steps=len(tweets))
