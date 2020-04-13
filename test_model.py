@@ -8,22 +8,25 @@ from lib.data_generators import encoded_datagen_inference
 from lib.data_generators import Test_datagen
 from lib.utils import get_tweets
 import pickle
+from tqdm import tqdm
 
 # Paths
 test_data_path = "../data/test/"
 en_test_data = os.path.join(test_data_path, "en")
 es_test_data = os.path.join(test_data_path, "es")
+en_es_test_data = os.path.join(test_data_path, "en+es")
 saved_models_path = "models/checkpoints"
 
 # Select language to test
-lang = "es"
+lang = "en+es"
 # Select model to test
-model_number = 4
+model_number = 5
 # Get the path to the trained model
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
+#ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
 # Build the selected model to load the weights
-if model_number in [0, 2, 3, 4]:
+if model_number in [0, 2, 3, 4, 5]:
     if model_number == 0:
         model = model_0(lang, downloaded=True)
     elif model_number == 2:
@@ -32,6 +35,8 @@ if model_number in [0, 2, 3, 4]:
         model = model_3(lang, downloaded=True)
     elif model_number == 4:
         model = model_4(lang, downloaded=True)
+    elif model_number == 5:
+        model = model_5(downloaded=True)
     
     # Compile the model
     model.compile(optimizer="sgd", loss="binary_crossentropy", metrics=["accuracy"]) 
@@ -47,10 +52,14 @@ if model_number == 1:
 # Select language for data
 if lang == "es": test_data = es_test_data
 elif lang == "en": test_data = en_test_data
+elif lang == "en+es": test_data = en_es_test_data
 
 # Load labels
 with open(os.path.join(test_data, "labels_dict.pickle"), "rb") as handle:
     labels_dict = pickle.load(handle)
+
+
+print(f"Going to run test with model {model_number} and language {lang}")
 
 '''
 Prediction
@@ -59,7 +68,7 @@ classification_threshold = 0.5
 total_authors = 0
 fake_miss = 0
 true_miss = 0
-for f_name in os.listdir(test_data):
+for f_name in tqdm(os.listdir(test_data)):
     if f_name.endswith(".xml"):
         # Get data from file
         author_id = f_name[:-4]

@@ -14,26 +14,30 @@ en_train_data = os.path.join(data_path, "en", "train_tweets.txt")
 en_dev_data = os.path.join(data_path, "en", "dev_tweets.txt")
 es_train_data = os.path.join(data_path, "es", "train_tweets.txt")
 es_dev_data = os.path.join(data_path, "es", "dev_tweets.txt")
+en_es_train_data = os.path.join(data_path, "en+es", "train_tweets.txt")
+en_es_dev_data = os.path.join(data_path, "en+es", "dev_tweets.txt")
 saved_models_path = "models/checkpoints"
 
 # Select language for training
-lang = 'en'
+lang = 'en+es'
 
 if lang == 'en':
     train_data, dev_data = en_train_data, en_dev_data
 elif lang == 'es':
     train_data, dev_data = es_train_data, es_dev_data
+elif lang == 'en+es':
+    train_data, dev_data = en_es_train_data, en_es_dev_data
 
 batch_size = 256
 epochs = 10000
 # Select model architecture
-model_number = 4
+model_number = 5
+# To enable the fine tuning of the pretrained embedding models [0, 2, 3, 4, 5]
+trainable_embedding = True
 
 # Build the selected model
 print(f"Building model {model_number} for language {lang}...")
-if model_number in [0, 2, 3, 4]:
-    # To enable the fine tuning of the pretrained embedding
-    trainable_embedding = True
+if model_number in [0, 2, 3, 4, 5]:
     # Build the data generators for train and dev
     train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
     dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
@@ -46,6 +50,8 @@ if model_number in [0, 2, 3, 4]:
         model = model_3(lang, trainable_embedding, downloaded=True)
     elif model_number == 4:
         model = model_4(lang, trainable_embedding, downloaded=True)
+    elif model_number == 5:
+        model = model_5(downloaded=True)
 
 elif model_number == 1:
     # Build the data generators for train and dev
@@ -60,10 +66,11 @@ elif model_number == 1:
 model.summary()
 
 # Optimizer 
-opt = SGD(learning_rate=0.0002, momentum=0.9)
+opt = SGD(learning_rate=0.001, momentum=0.9)
 #opt = Adam(learning_rate=0.0002)
 
 # Learning rate scheduler
+'''
 def lr_scheduler(epoch):
     if epoch < 1000:
         return 0.0002
@@ -71,13 +78,21 @@ def lr_scheduler(epoch):
         return 0.0001
     else:
         return 0.00005
+'''
+def lr_scheduler(epoch):
+    if epoch < 100:
+        return 0.001
+    elif epoch < 500:
+        return 0.0005
+    else:
+        return 0.0001
 
 # Callbacks
 callbacks = []
 
 callbacks.append(LearningRateScheduler(lr_scheduler))
 
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 callbacks.append(keras.callbacks.ModelCheckpoint(
         ckpt_path, 
         save_weights_only=(model_number != 1), 
@@ -94,7 +109,7 @@ history = model.fit(train_datagen, epochs=epochs, validation_data=dev_datagen, c
 # Load the model from the best epoch
 print(f"Loading best model from training...")
 # Check the type of saved model (weights or full model)
-if model_number in [0, 2, 3, 4]:
+if model_number in [0, 2, 3, 4, 5]:
     # Create the model architecture to load the saved weights in it
     if model_number == 0:
         loaded_model = model_0(lang, downloaded=True)
@@ -104,6 +119,8 @@ if model_number in [0, 2, 3, 4]:
         loaded_model = model_3(lang, downloaded=True)
     elif model_number == 4:
         loaded_model = model_4(lang, downloaded=True)
+    elif model_number == 5:
+        loaded_model = model_5(downloaded=True)
 
     # Compile the model
     loaded_model.compile(optimizer=opt, loss="binary_crossentropy", metrics=["accuracy"]) 
