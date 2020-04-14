@@ -188,3 +188,39 @@ def model_5(downloaded=False):
 
     return model
 
+def model_6(downloaded=False):
+    '''
+    Model with pretrained convolutional encoder for multilingual sentences(to 512 vector encoding)
+    '''
+    # Get the embedding for the selected language
+    if downloaded:
+        embedding_path = "models/tf_hub_modules/embedding_cnn_multilingual_512"
+    else:
+        embedding_path = "https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3"
+
+    embedding = hub.load(embedding_path)
+
+    def embedding_func(x):
+        return embedding(x)
+
+    x_input = Input(shape=[], dtype=tf.string)
+    x_embed = Lambda(embedding_func, name="multilingual_encoder")(x_input)
+    x1 = Dense(64, activation="relu")(x_embed)
+    x1 = BatchNormalization()(x1)
+    x2 = Concatenate()([x_embed, x1])
+    x2 = Dropout(0.5)(x2)
+    x3 = Dense(128, activation="relu")(x2)
+    x3 = BatchNormalization()(x3)
+    x4 = Concatenate()([x2, x3])
+    x4 = Dropout(0.5)(x4)
+    x5 = Dense(256, activation="relu")(x4)
+    x5 = BatchNormalization()(x5)
+    x6 = Concatenate()([x4, x5])
+    x6 = Dropout(0.5)(x6)
+    x7 = Dense(512, activation="relu")(x6)
+    x7 = BatchNormalization()(x7)
+    out = Dense(1, activation="sigmoid")(x7)
+
+    model = keras.Model(inputs=[x_input], outputs=[out])
+
+    return model

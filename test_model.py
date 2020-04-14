@@ -23,10 +23,12 @@ lang = "en+es"
 model_number = 5
 # Get the path to the trained model
 #ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_fastlr.ckpt")
+#ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_Adam.ckpt")
+#ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
 # Build the selected model to load the weights
-if model_number in [0, 2, 3, 4, 5]:
+if model_number in [0, 2, 3, 4, 5, 6]:
     if model_number == 0:
         model = model_0(lang, downloaded=True)
     elif model_number == 2:
@@ -37,6 +39,8 @@ if model_number in [0, 2, 3, 4, 5]:
         model = model_4(lang, downloaded=True)
     elif model_number == 5:
         model = model_5(downloaded=True)
+    elif model_number == 6:
+        model = model_6(downloaded=True)
     
     # Compile the model
     model.compile(optimizer="sgd", loss="binary_crossentropy", metrics=["accuracy"]) 

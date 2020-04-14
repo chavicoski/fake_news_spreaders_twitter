@@ -1,0 +1,41 @@
+model 3:
+    es:
+    Accuracy: 0.72 -> true_misses: 11, fake_misses: 6, hits: 43, total: 60
+    en:
+    Accuracy: 0.63 -> true_misses: 8, fake_misses: 14, hits: 38, total: 60
+
+    es_slowlr:
+    Accuracy: 0.72 -> true_misses: 11, fake_misses: 6, hits: 43, total: 60
+    en_slowlr:
+    Accuracy: 0.60 -> true_misses: 8, fake_misses: 16, hits: 36, total: 60
+
+model 4:
+    es:
+    Accuracy: 0.72 -> true_misses: 9, fake_misses: 8, hits: 43, total: 60
+    en:
+    Accuracy: 0.60 -> true_misses: 9, fake_misses: 15, hits: 36, total: 60
+    es_slowlr:
+    Accuracy: 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+    en_slowlr:
+    Accuracy: 0.63 -> true_misses: 9, fake_misses: 13, hits: 38, total: 60
+
+    es_slowlr_BN:
+    Accuracy: 0.72 -> true_misses: 11, fake_misses: 6, hits: 43, total: 60
+    en_slowlr_BN:
+    Accuracy: 0.67 -> true_misses: 9, fake_misses: 11, hits: 40, total: 60
+
+model 5:
+    es:
+    Accuracy: 0.73 -> true_misses: 11, fake_misses: 5, hits: 44, total: 60
+    en:
+    Accuracy: 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+    
+    en+en_Adam:
+    Accuracy: 0.67 -> true_misses: 19, fake_misses: 21, hits: 80, total: 120
+
+model 6:
+    en+es:
+    Accuracy: 0.64 -> true_misses: 25, fake_misses: 18, hits: 77, total: 120
+
+    en+es_Adam
+    Accuracy: 0.66 -> true_misses: 24, fake_misses: 17, hits: 79, total: 120
