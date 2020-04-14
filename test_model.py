@@ -18,13 +18,13 @@ en_es_test_data = os.path.join(test_data_path, "en+es")
 saved_models_path = "models/checkpoints"
 
 # Select language to test
-lang = "en+es"
+lang = "es"
 # Select model to test
-model_number = 5
+model_number = 6
 # Get the path to the trained model
 #ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_slowlr_BN.ckpt")
-ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_fastlr.ckpt")
-#ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_Adam.ckpt")
+#ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_fastlr.ckpt")
+ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}_Adam.ckpt")
 #ckpt_path = os.path.join(saved_models_path, f"model_{model_number}-{lang}.ckpt")
 
 # Build the selected model to load the weights

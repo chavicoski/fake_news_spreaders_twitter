@@ -39,3 +39,9 @@ model 6:
 
     en+es_Adam
     Accuracy: 0.66 -> true_misses: 24, fake_misses: 17, hits: 79, total: 120
+
+    en_Adam:
+    Accuracy: 0.73 -> true_misses: 13, fake_misses: 3, hits: 44, total: 60
+
+    es_Adam:
+    Accuracy: 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
