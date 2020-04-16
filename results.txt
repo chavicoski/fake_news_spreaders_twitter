@@ -26,12 +26,22 @@ model 4:
 
 model 5:
     es:
-    Accuracy: 0.73 -> true_misses: 11, fake_misses: 5, hits: 44, total: 60
+    Average voting: acc = 0.73 -> true_misses: 11, fake_misses: 5, hits: 44, total: 60
+    Product voting: acc = 0.73 -> true_misses: 11, fake_misses: 5, hits: 44, total: 60
     en:
-    Accuracy: 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+    Average voting: acc = 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+    Product voting: acc = 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+
+    es (0.4 threshold):
+    Average voting: acc = 0.82 -> true_misses: 2, fake_misses: 9, hits: 49, total: 60
+    Product voting: acc = 0.73 -> true_misses: 11, fake_misses: 5, hits: 44, total: 60
+    en (0.4 threshold):
+    Average voting: acc = 0.58 -> true_misses: 0, fake_misses: 25, hits: 35, total: 60
+    Product voting: acc = 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
     
-    en+en_Adam:
-    Accuracy: 0.67 -> true_misses: 19, fake_misses: 21, hits: 80, total: 120
+    en+es_Adam:
+    Average voting: acc = 0.67 -> true_misses: 19, fake_misses: 21, hits: 80, total: 120
+    Product voting: acc = 0.68 -> true_misses: 18, fake_misses: 21, hits: 81, total: 120
 
 model 6:
     en+es:
@@ -45,3 +55,16 @@ model 6:
 
     es_Adam:
     Accuracy: 0.73 -> true_misses: 9, fake_misses: 7, hits: 44, total: 60
+
+model 7:
+    en+es:
+    Average voting: acc = 0.66 -> true_misses: 27, fake_misses: 14, hits: 79, total: 120
+    Product voting: acc = 0.66 -> true_misses: 27, fake_misses: 14, hits: 79, total: 120
+
+    en+es (0.4 threshold):
+    Average voting: acc = 0.71 -> true_misses: 5, fake_misses: 30, hits: 85, total: 120
+    Product voting: acc = 0.66 -> true_misses: 27, fake_misses: 14, hits: 79, total: 120
+
+    en+es (0.42 threshold):
+    Average voting: acc = 0.72 -> true_misses: 8, fake_misses: 26, hits: 86, total: 120
+    Product voting: acc = 0.66 -> true_misses: 27, fake_misses: 14, hits: 79, total: 120

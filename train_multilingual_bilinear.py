@@ -17,7 +17,7 @@ saved_models_path = "models/checkpoints"
 
 lang = "en+es"
 batch_size = 256
-epochs = 5000
+epochs = 500
 model_number = 7
 
 #################
@@ -30,8 +30,8 @@ print(f"Building model {model_number} for language {lang}...")
 train_datagen, num_batches_train = text_datagen(train_data, batch_size=batch_size)
 dev_datagen, num_batches_dev = text_datagen(dev_data, batch_size=batch_size)
 # Trained models paths
-en_ckpt_path = "models/checkpoints/model_5-en.ckpt"
-es_ckpt_path = "models/checkpoints/model_5-es.ckpt"
+en_ckpt_path = "models/checkpoints/model_5-en_slowlr_BN.ckpt"
+es_ckpt_path = "models/checkpoints/model_5-es_slowlr_BN.ckpt"
 
 # Create the model
 if model_number == 7:
@@ -51,7 +51,7 @@ opt = SGD(learning_rate=0.001, momentum=0.9)
 def lr_scheduler(epoch):
     if epoch < 100:
         return 0.001
-    elif epoch < 500:
+    elif epoch < 300:
         return 0.0005
     else:
         return 0.0001
@@ -101,7 +101,7 @@ opt = SGD(learning_rate=0.001, momentum=0.9)
 def lr_scheduler(epoch):
     if epoch < 100:
         return 0.001
-    elif epoch < 500:
+    elif epoch < 300:
         return 0.0005
     else:
         return 0.0001
@@ -112,7 +112,7 @@ callbacks = []
 callbacks.append(LearningRateScheduler(lr_scheduler))
 
 fine_ckpt_name = f"model_{model_number}-{lang}_fine.ckpt"
-fine_ckpt_path = os.path.join(saved_models_path, fine_ckpt_path)
+fine_ckpt_path = os.path.join(saved_models_path, fine_ckpt_name)
 callbacks.append(keras.callbacks.ModelCheckpoint(
         fine_ckpt_path, 
         save_weights_only=True, 
