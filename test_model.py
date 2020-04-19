@@ -1,6 +1,6 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
-os.environ["CUDA_VISIBLE_DEVICES"]="1";  
+os.environ["CUDA_VISIBLE_DEVICES"]="0";  
 import tensorflow as tf
 from tensorflow import keras
 from models.my_models import *
@@ -21,7 +21,7 @@ saved_models_path = "models/checkpoints"
 # Select language to test
 lang = "en+es"
 # Select model to test
-model_number = 7
+model_number = 6
 # Get the path to the trained model
 slow_name = f"model_{model_number}-{lang}_slowlr_BN"
 fast_name = f"model_{model_number}-{lang}_fastlr"
@@ -29,7 +29,7 @@ adam_name = f"model_{model_number}-{lang}_Adam"
 base_name = f"model_{model_number}-{lang}"
 fine_name = f"model_{model_number}-{lang}_fine"
 
-ckpt_name = fine_name
+ckpt_name = base_name
 ckpt_path = os.path.join(saved_models_path, ckpt_name + ".ckpt")
 
 # Build the selected model to load the weights

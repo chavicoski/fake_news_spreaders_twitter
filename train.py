@@ -31,7 +31,7 @@ elif lang == 'en+es':
 batch_size = 256
 epochs = 5000
 # Select model architecture
-model_number = 5
+model_number = 4
 # To enable the fine tuning of the pretrained embedding models [0, 2, 3, 4]
 trainable_embedding = True
 
@@ -68,15 +68,14 @@ elif model_number == 1:
 model.summary()
 
 # Optimizer 
-opt = SGD(learning_rate=0.001, momentum=0.9)
+opt = SGD(learning_rate=0.0002, momentum=0.9)
 #opt = Adam(learning_rate=0.0002)
 
 # Learning rate scheduler
-'''
 def lr_scheduler(epoch):
     if epoch < 1000:
         return 0.0002
-    elif epoch < 5000:
+    elif epoch < 3000:
         return 0.0001
     else:
         return 0.00005
@@ -88,6 +87,7 @@ def lr_scheduler(epoch):
         return 0.0005
     else:
         return 0.0001
+'''
 
 # Callbacks
 callbacks = []
