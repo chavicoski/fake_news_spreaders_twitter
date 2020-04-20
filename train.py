@@ -1,6 +1,6 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
-os.environ["CUDA_VISIBLE_DEVICES"]="0";  
+os.environ["CUDA_VISIBLE_DEVICES"]="1";  
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.optimizers import SGD, Adam
@@ -19,7 +19,7 @@ en_es_dev_data = os.path.join(data_path, "en+es", "dev_tweets.txt")
 saved_models_path = "models/checkpoints"
 
 # Select language for training
-lang = 'en'
+lang = 'es'
 
 if lang == 'en':
     train_data, dev_data = en_train_data, en_dev_data
@@ -31,7 +31,7 @@ elif lang == 'en+es':
 batch_size = 256
 epochs = 5000
 # Select model architecture
-model_number = 4
+model_number = 1
 # To enable the fine tuning of the pretrained embedding models [0, 2, 3, 4]
 trainable_embedding = True
 
@@ -57,8 +57,8 @@ if model_number in [0, 2, 3, 4, 5, 6]:
 
 elif model_number == 1:
     # Build the data generators for train and dev
-    train_datagen, vocab_train, num_batches_train = encoded_datagen(train_data, batch_size=batch_size)
-    dev_datagen, vocab_dev, num_batches_dev = encoded_datagen(dev_data, batch_size=batch_size)
+    train_datagen, vocab_train, num_batches_train = encoded_datagen(train_data, lang, batch_size=batch_size)
+    dev_datagen, vocab_dev, num_batches_dev = encoded_datagen(dev_data, lang, batch_size=batch_size)
     # Compute the vocabulary size for the embedding layer. We add 1 because of the padding character
     vocab_size = len(vocab_train.union(vocab_dev)) + 1
     # Create the model

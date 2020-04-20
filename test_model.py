@@ -19,9 +19,9 @@ en_es_test_data = os.path.join(test_data_path, "en+es")
 saved_models_path = "models/checkpoints"
 
 # Select language to test
-lang = "en+es"
+lang = "en"
 # Select model to test
-model_number = 6
+model_number = 1
 # Get the path to the trained model
 slow_name = f"model_{model_number}-{lang}_slowlr_BN"
 fast_name = f"model_{model_number}-{lang}_fastlr"
@@ -96,14 +96,16 @@ for f_name in tqdm(os.listdir(test_data)):
         # Build mini-dataset for the author
         tweets = list(get_tweets(f_path))
         if model_number == 1:
-            tweets_dataset = encoded_datagen_inference(tweets)
+            tweets_dataset = encoded_datagen_inference(tweets, lang)
         else:
             tweets_dataset = tf.data.Dataset.from_tensor_slices(tweets)
             tweets_dataset = tweets_dataset.batch(1)
  
-        #print("TESTING DATAGEN")
-        #for elem in tweets_dataset:
-        #    print(elem.numpy())
+        '''
+        print("TESTING DATAGEN")
+        for elem in tweets_dataset:
+            print(elem)
+        '''
 
         # Predict
         results = model.predict(tweets_dataset, steps=len(tweets))

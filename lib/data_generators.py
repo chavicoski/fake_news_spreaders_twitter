@@ -12,12 +12,13 @@ import tensorflow_datasets as tfds
 Data generator that returns the tweets encoded word by word
 Params:
     data_file -> Is a path to a txt file with N rows where each row has a tweet and the label (0 or 1) separated by a space.
+    lang -> "en" or "es" string with the laguage of the data
     batch_size -> Number of samples per batch created by the generator
     shuffle_at_end -> To shuffle the samples at the end of each epoch
     buffer_size -> buffer size for shuffling the data
     prefetch_batches -> max number of batches to prefetch. set to 'tf.data.experimental.AUTOTUNE' for automatic selection
 '''
-def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=100, prefetch_batches=tf.data.experimental.AUTOTUNE):
+def encoded_datagen(data_file, lang, batch_size=64, shuffle_at_end=True, buffer_size=100, prefetch_batches=tf.data.experimental.AUTOTUNE):
 
     # Function so separate the tweet string from the label
     @tf.function
@@ -49,7 +50,7 @@ def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=1
     # Build the encoder from the vocabulary
     encoder = tfds.features.text.TokenTextEncoder(vocabulary_set)
     # Store the encoder for testing
-    encoder.save_to_file("models/encoder.txt")
+    encoder.save_to_file(f"models/encoder_{lang}")
     
     # Encoder fuction to apply to the samples
     def encode(text_tensor, label):
@@ -93,27 +94,28 @@ def encoded_datagen(data_file, batch_size=64, shuffle_at_end=True, buffer_size=1
 Data generator that returns the tweets encoded word by word
 Params:
     tweets -> list with the tweet's strings
+    lang -> "en" or "es" string with the laguage of the data
 '''
-def encoded_datagen_inference(tweets):
+def encoded_datagen_inference(tweets, lang):
 
-	# Create the Dataset with the tweets
+    # Create the Dataset with the tweets
     tweets_dataset = tf.data.Dataset.from_tensor_slices(tweets)
 
     '''
     Sentence tokenization
     '''
     # Build the encoder from the vocabulary
-    encoder = tfds.features.text.TokenTextEncoder.load_from_file("models/encoder.txt")
+    encoder = tfds.features.text.TokenTextEncoder.load_from_file(f"models/encoder_{lang}")
     
     # Encoder fuction to apply to the samples
     def encode(text_tensor):
         encoded_text = encoder.encode(text_tensor.numpy())
-        return encoded_text
+        return [encoded_text]
 
     # Encoder function wraper
     def encode_map_fn(text):
         # py_func doesn't set the shape of the returned tensors.
-        encoded_text = tf.py_function(encode, inp=[text], Tout=tf.int64)
+        encoded_text = tf.py_function(encode, inp=[text], Tout=(tf.int64))
 
         # `tf.data.Datasets` work best if all components have a shape set
         #  so set the shapes manually: 
@@ -122,13 +124,11 @@ def encoded_datagen_inference(tweets):
         return encoded_text
 
     # Apply the encoder to the data
-    tweets_dataset = tweets_dataset.map(encode_map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    tweets_dataset = tweets_dataset.map(encode_map_fn)
     '''
     Batch preparation
     '''
-    # Prepare padded batches in order to have sentences of the same length
-	# Batch_size is one for later calculation fo the author label
-    #tweets_dataset = tweets_dataset.padded_batch(batch_size=1, padded_shapes=([None]))
+    # Batch_size is one for later calculation fo the author label
     tweets_dataset = tweets_dataset.batch(1)
 
     return tweets_dataset
