@@ -1,3 +1,11 @@
+model 1:
+    en:
+    Average voting: acc = 0.57 -> true_misses: 26, fake_misses: 0, hits: 34, total: 60
+    Product voting: acc = 0.57 -> true_misses: 26, fake_misses: 0, hits: 34, total: 60
+    es:
+    Average voting: acc = 0.47 -> true_misses: 32, fake_misses: 0, hits: 28, total: 60
+    Product voting: acc = 0.47 -> true_misses: 32, fake_misses: 0, hits: 28, total: 60
+
 model 3:
     es:
     Accuracy: 0.72 -> true_misses: 11, fake_misses: 6, hits: 43, total: 60

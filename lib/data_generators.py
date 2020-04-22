@@ -124,7 +124,7 @@ def encoded_datagen_inference(tweets, lang):
         return encoded_text
 
     # Apply the encoder to the data
-    tweets_dataset = tweets_dataset.map(encode_map_fn)
+    tweets_dataset = tweets_dataset.map(encode_map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     '''
     Batch preparation
     '''
